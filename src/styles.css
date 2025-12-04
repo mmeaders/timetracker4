@@ -1,0 +1,112 @@
+/* Time Tracker TUI Styles - Compact, calculator-sized layout */
+
+Screen {
+    align: center middle;
+}
+
+/* Main Container - Compact size like a calculator */
+#main-container {
+    width: 45;
+    height: auto;
+    border: solid $primary;
+    padding: 1 2;
+}
+
+#summary-container {
+    width: 50;
+    height: auto;
+    border: solid $primary;
+    padding: 1 2;
+}
+
+#detail-container {
+    width: 70;
+    height: auto;
+    border: solid $primary;
+    padding: 1 2;
+}
+
+/* Title styling */
+#title {
+    text-align: center;
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+#report-title, #detail-title {
+    text-align: center;
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+/* Status displays */
+#status-display {
+    text-align: center;
+    margin-bottom: 1;
+}
+
+#project-display {
+    text-align: center;
+    margin-bottom: 1;
+}
+
+#elapsed-display {
+    text-align: center;
+    text-style: bold;
+    color: $success;
+    content-align: center middle;
+    height: 3;
+    margin-bottom: 1;
+    background: $surface;
+    border: solid $primary;
+}
+
+/* Select widget */
+#project-select, #project-filter {
+    width: 100%;
+    margin: 1 0;
+}
+
+/* Button container */
+#button-container {
+    layout: horizontal;
+    align: center middle;
+    height: auto;
+    margin-top: 1;
+}
+
+#button-container Button {
+    margin: 0 1;
+    min-width: 12;
+}
+
+/* Data tables */
+DataTable {
+    width: 100%;
+    height: auto;
+    max-height: 20;
+    margin: 1 0;
+}
+
+/* Label styling */
+Label {
+    margin-top: 1;
+    text-style: bold;
+}
+
+/* Header */
+Header {
+    background: $primary;
+    color: $text;
+}
+
+/* Button variants */
+Button.success {
+    background: $success;
+}
+
+Button.error {
+    background: $error;
+}
