@@ -71,6 +71,7 @@ Screen {
 
 /* Button container */
 #button-container {
+    width: 100%;
     layout: horizontal;
     align: center middle;
     height: auto;
@@ -79,7 +80,7 @@ Screen {
 
 #button-container Button {
     margin: 0 1;
-    min-width: 12;
+    min-width: 10;
 }
 
 /* Data tables */
@@ -108,5 +109,32 @@ Button.success {
 }
 
 Button.error {
+    background: $error;
+}
+
+/* Custom button focus styling - use border instead of text highlighting */
+
+/* Ensure buttons have space for focus border to prevent layout shift */
+#button-container Button {
+    border: solid transparent;  /* Pre-allocate border space */
+}
+
+/* Base button focus styling */
+Button:focus {
+    text-style: none;
+}
+
+/* Focus borders matching button variants */
+Button:focus {
+    border: heavy $primary;
+}
+
+Button.success:focus {
+    border: heavy $success;
+    background: $success;
+}
+
+Button.error:focus {
+    border: heavy $error;
     background: $error;
 }

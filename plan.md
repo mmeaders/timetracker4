@@ -1,95 +1,80 @@
-# UI Enhancements Plan: Close Button & Button Focus Styling
+# UI Enhancements Plan: Button Refinements & Focus Styling
 
 ## Overview
-This plan implements two UI enhancements for the TimeTracker4 TUI application:
-1. Add a red X close button in the top-right corner of the Time Tracker frame
-2. Change button focus appearance from text highlighting to border highlighting
+This plan implements UI enhancements for the TimeTracker4 TUI application:
+1. Make existing buttons slightly smaller
+2. Add an Exit button (same style as other buttons)
+3. Align the button row within the frame
+4. Change button focus appearance from text highlighting to border highlighting
 
 ## Implementation Approach
 
-### Part 1: Red X Close Button
+### Part 1: Button Size & Exit Button
 
-**Strategy:** Add a horizontal container at the top of the main screen that holds both the title and a small close button.
+**Strategy:** Reduce button width, add Exit button to the existing button container, and ensure proper alignment within the frame.
 
-**Layout Structure:**
+**Current Button Layout (in compose()):**
+```python
+Container(
+    Button("Start", id="start-stop-btn", variant="success"),
+    Button("Reports", id="reports-btn"),
+    id="button-container"
+)
 ```
-Vertical (main-container)
-├── Horizontal (title-bar) ← NEW
-│   ├── Static (title) - centered, takes remaining space
-│   └── Button (close-btn) - red X, fixed width, aligned right
-├── Static (status-display)
-├── Static (project-display)
-... rest of content
+
+**New Button Layout:**
+```python
+Container(
+    Button("Start", id="start-stop-btn", variant="success"),
+    Button("Reports", id="reports-btn"),
+    Button("Exit", id="exit-btn"),
+    id="button-container"
+)
 ```
 
 **Implementation Steps:**
 
 1. **Modify `src/ui/screens/main_screen.py`:**
 
-   a. Add `Horizontal` import (line 6):
+   a. Update `compose()` method (lines 33-55):
+   - Add Exit button to the button container (after Reports button):
    ```python
-   from textual.containers import Container, Vertical, Horizontal
+   Button("Exit", id="exit-btn"),
    ```
 
-   b. Update `compose()` method (lines 33-55):
-   - Replace `Static("Time Tracker", id="title")` with:
+   b. Extend `on_button_pressed()` method (lines 90-95):
+   - Add handler for exit button:
    ```python
-   Horizontal(
-       Static("Time Tracker", id="title"),
-       Button("X", id="close-btn", variant="error", can_focus=False),
-       id="title-bar"
-   ),
-   ```
-
-   c. Extend `on_button_pressed()` method (lines 90-95):
-   - Add handler for close button:
-   ```python
-   elif event.button.id == "close-btn":
+   elif event.button.id == "exit-btn":
        self.app.action_quit()
    ```
 
-2. **Add CSS styling to `src/styles.css`:**
+2. **Update CSS styling in `src/styles.css`:**
 
-   Insert after line 35 (after `#title` section):
+   a. Modify button sizing (around line 66-70):
+   - Change button `min-width` from current value to smaller value (e.g., 10 or 9):
    ```css
-   /* Title bar - horizontal container for title + close button */
-   #title-bar {
-       height: auto;
+   #button-container Button {
+       min-width: 10;  /* Reduced from previous value */
+       margin: 0 1;
+   }
+   ```
+
+   b. Add proper centering to button-container (around line 60-64):
+   ```css
+   #button-container {
        width: 100%;
-   }
-
-   /* Override title styling when inside title-bar */
-   #title-bar #title {
-       width: 1fr;
-       text-align: center;
-       text-style: bold;
-       color: $accent;
-       margin-bottom: 0;
-   }
-
-   /* Close button styling */
-   #close-btn {
-       width: 3;
-       min-width: 3;
-       height: 1;
-       padding: 0;
-       margin-left: auto;
-       background: $error;
-       color: $text;
-   }
-
-   #close-btn:hover {
-       text-style: bold;
+       height: auto;
+       align: center middle;
+       layout: horizontal;
    }
    ```
 
 **Design Decisions:**
-- **Scope:** Main screen only (not added to summary/detail screens)
-- **Widget:** Button (not Static) for built-in click handling and accessibility
-- **Character:** Simple "X" for maximum terminal compatibility
-- **Focusable:** `can_focus=False` to keep it out of tab navigation (since 'q' key provides keyboard access)
-- **Size:** Minimal (width: 3, height: 1) to be unobtrusive
-- **Color:** `variant="error"` for red background matching the error theme
+- **Button Size:** Slightly reduce `min-width` to make buttons more compact
+- **Exit Button:** Same style as existing buttons for consistency
+- **Alignment:** Use Textual's `align: center middle` to center the button row horizontally within the frame
+- **Variant:** Exit button uses default variant (not error) to match Reports button styling
 
 ### Part 2: Button Focus Border Styling
 
@@ -140,69 +125,73 @@ Vertical (main-container)
 ## Files to Modify
 
 ### 1. `/home/mike/projects/timetracker4/src/ui/screens/main_screen.py`
-- Line 6: Add `Horizontal` import
-- Lines 33-55: Modify `compose()` to add title-bar and close button
-- Lines 90-95: Extend `on_button_pressed()` with close button handler
+- Lines 33-55: Add Exit button to `compose()` method's button container
+- Lines 90-95: Extend `on_button_pressed()` with exit button handler
 
 ### 2. `/home/mike/projects/timetracker4/src/styles.css`
-- After line 35: Add title-bar and close-btn styling
+- Lines 60-70: Update `#button-container` styling for alignment and button sizing
 - After line 112: Add button focus styling rules
-
-### 3. `/home/mike/projects/timetracker4/src/app.py`
-- No changes needed (existing quit binding at line 21 will be used)
 
 ## Testing Approach
 
 **Manual verification steps:**
 
-1. **Close Button Tests:**
-   - [ ] Close button appears in top-right corner inside the frame
-   - [ ] Close button is red
-   - [ ] Clicking close button exits the application
-   - [ ] Title remains visually centered
-   - [ ] Layout remains compact (width 45)
+1. **Button Layout Tests:**
+   - [ ] Buttons appear smaller (reduced width)
+   - [ ] Exit button appears after Reports button
+   - [ ] Button row is centered within the frame
+   - [ ] Layout remains compact and aligned
+   - [ ] All three buttons are consistently sized
 
-2. **Focus Styling Tests:**
-   - [ ] Tab key cycles through widgets
+2. **Exit Button Tests:**
+   - [ ] Exit button appears with default styling (matches Reports button)
+   - [ ] Clicking Exit button exits the application
+   - [ ] Exit button is included in tab navigation
+
+3. **Focus Styling Tests:**
+   - [ ] Tab key cycles through all widgets (including Exit button)
    - [ ] Focused buttons show border (not text highlighting)
    - [ ] "Start" button shows green border when focused
    - [ ] "Stop" button shows red border when focused (after starting tracking)
-   - [ ] "Reports" button shows primary color border when focused
+   - [ ] "Reports" and "Exit" buttons show primary color border when focused
    - [ ] No layout shift when buttons gain/lose focus
 
-3. **Integration Tests:**
+4. **Integration Tests:**
    - [ ] 'q' keyboard shortcut still works
    - [ ] 's' keyboard shortcut still works
    - [ ] Starting/stopping tracking updates button variant and focus border color
+   - [ ] Button alignment remains correct when Start changes to Stop
 
 ## Implementation Sequence
 
 **Recommended order:**
 
 1. **Phase 1:** Button focus styling (lower risk)
-   - Add focus CSS rules
+   - Add focus CSS rules to `src/styles.css`
    - Test with Tab key navigation
    - Verify no layout issues
 
-2. **Phase 2:** Close button (higher complexity)
-   - Add Horizontal import
-   - Modify compose() method
-   - Add click handler
-   - Add CSS styling
-   - Test functionality and positioning
+2. **Phase 2:** Exit button and sizing (moderate complexity)
+   - Update button container CSS for alignment and sizing
+   - Add Exit button to `compose()` method
+   - Add exit button handler to `on_button_pressed()`
+   - Test button layout, sizing, and functionality
 
-This sequence allows testing focus styling independently before introducing layout changes.
+This sequence allows testing focus styling independently before modifying the button layout.
 
 ## Potential Issues & Mitigation
 
-**Issue:** Title might appear off-center with close button present
-- **Mitigation:** Title uses `width: 1fr` to take remaining space with `text-align: center` for visual centering
+**Issue:** Three buttons might not fit properly within the frame width
+- **Mitigation:** Reduce button `min-width` to accommodate all three buttons; test various terminal sizes
 
 **Issue:** Focus border might cause layout shift
 - **Mitigation:** Pre-allocate border space with `border: solid transparent` in default state
 
 **Issue:** Button variant changes might not update focus border color
 - **Mitigation:** Textual's reactive CSS should handle this automatically; test during start/stop transitions
+
+**Issue:** Button row might not appear centered
+- **Mitigation:** Use `align: center middle` in CSS and verify horizontal centering with different button states
 
 ## Dependencies
 

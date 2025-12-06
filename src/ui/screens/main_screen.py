@@ -48,6 +48,7 @@ class MainScreen(Screen):
                 Container(
                     Button("Start", id="start-stop-btn", variant="primary"),
                     Button("Reports", id="reports-btn"),
+                    Button("Exit", id="exit-btn"),
                     id="button-container"
                 ),
                 id="main-container"
@@ -93,6 +94,8 @@ class MainScreen(Screen):
             self.action_toggle_tracking()
         elif event.button.id == "reports-btn":
             self.action_show_reports()
+        elif event.button.id == "exit-btn":
+            self.app.exit()
 
     def action_toggle_tracking(self) -> None:
         """Toggle tracking on/off."""
